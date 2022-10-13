@@ -24,6 +24,18 @@ last_axis_used = ""
 rotation_x_flag = 0
 rotation_y_flag = 0
 
+goalsCounter1 = 0
+goalsCounter2 = 0
+
+posYBall = 2.7
+posXBall = 0
+posZBall = 0
+angleRotation = 45
+
+flagRotationBallX = 0
+flagRotationBallY = 1
+flagRotationBallZ = 0
+
 
 def init():
     glClearColor(0.0, 0.1, 0.0, 1.0) 
@@ -110,14 +122,18 @@ def drawGoalpost(x_pos):
     glPopMatrix()
 
 def drawBall():
+    global posYBall,posXBall, posZBall, angleRotation, flagRotationBallX, flagRotationBallY, flagRotationBallZ
+
+    glFlush() # para apagar a primeira e add a segunda
     glColor3f(1.0, 1.0, 1.0)
-   # glLoadIdentity()
+   
     glPushMatrix()
-    glTranslatef (0, 2.5, 0.0)
-    #glTranslatef (0.5, 0.0, 0.0)
-    glRotatef(45, 0, 1, 0)
+    glTranslatef (posXBall, posYBall, posZBall)
+   
+    glRotatef(angleRotation, flagRotationBallX, flagRotationBallY, flagRotationBallZ)
+    # o 1 é em qual eixo tem que ser feita a rotacao
     glutWireSphere (0.5, 20, 20)
-   # glutSolidSphere(0.7, 8, 8)
+   
     glPopMatrix()
 
 def bresenhamFieldLines(x1, y1, x2, y2, z1, z2, direction):
@@ -258,6 +274,7 @@ def display():
     glTranslate(0, 0, 1.4)
     drawGoalpost(9.2)
     drawGoalpost(-9.2)
+    displayScores()
 
     drawFieldLines()
 
@@ -271,6 +288,117 @@ def move_camera():
               lookat_x, lookat_y, lookat_z)
     print(f"posicao da camera: ({camera_x}, {camera_y}, {camera_z})")
     print(f"posicao do centro: ({center_x}, {center_y}, {center_z})")
+
+# GOALS / SCORE
+
+def textScore(x, y, color, text):
+    glColor3fv(color)
+    glWindowPos2f(x, y)
+    glutBitmapString(GLUT_BITMAP_TIMES_ROMAN_24, text.encode('ascii'))
+
+def displayScores():
+    # glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+    textScore(100, 100, (1, 0, 0), str(goalsCounter1))
+    textScore(150, 100, (1, 0, 0), "x")
+    textScore(200, 100, (1, 0, 0), str(goalsCounter2))
+    # glutSwapBuffers()
+    # glutPostRedisplay()
+
+def gol():
+
+    # Atualizar os contadores e chamar essa função para redesenhar!
+    glFlush()
+    displayScores()
+
+
+def checkSideLimits():
+    if posZBall>=4.25 or posZBall<=-4.25:
+        # retornar pro centro
+        returnBallCenter()
+        
+
+def returnBallCenter():
+    global posYBall,posXBall,posZBall,angleRotation, flagRotationBallX, flagRotationBallY, flagRotationBallZ
+
+    posYBall = 2.7
+    posXBall = 0
+    posZBall = 0
+    angleRotation = 45
+
+    flagRotationBallX = 0   
+    flagRotationBallY = 1
+    flagRotationBallZ = 0
+
+def checkIfHitsBar():
+    global posYBall,posXBall,posZBall
+
+    if posXBall == -8.5 or posXBall == 8.5:
+        return posZBall in [-1.5, -1.75,1.75, 2]
+
+    
+
+def checkGoalLineLimits(side):
+    global goalsCounter1, goalsCounter2, posXBall
+
+    
+    if checkIfHitsBar():
+        if side == "left":
+            posXBall+=0.25
+        else:
+            posXBall-=0.25
+        
+
+    if posXBall>=9.25:
+        if posZBall<2.5 and posZBall>-1.5:
+            goalsCounter1+=1
+            print("GOL")
+
+        returnBallCenter()
+        
+    elif posXBall<=-9.5:
+
+        if posZBall<2.5 and posZBall>-1.5:
+            goalsCounter2+=1
+            print("GOL")
+
+        returnBallCenter()      
+
+  
+def makeMovements(direction):
+    global posZBall, angleRotation, flagRotationBallZ, flagRotationBallX, flagRotationBallY, posZBall, posXBall, posYBall
+    
+    if direction == "up":
+        posZBall-=0.25
+        print(f"PosZ {posZBall}")
+        flagRotationBallX = 0
+        flagRotationBallY=0
+        flagRotationBallZ=1
+        angleRotation+=90
+
+    elif direction == "down":
+        posZBall+=0.25
+        print(f"PosZ {posZBall}")
+        flagRotationBallX = 0
+        flagRotationBallY=0
+        flagRotationBallZ=1
+        angleRotation-=90
+    elif direction == "left":
+        posXBall-=0.25
+        print(f"PosX {posXBall}")
+        flagRotationBallZ= 0
+        flagRotationBallY=0
+        flagRotationBallX=1
+        angleRotation-=90
+        
+    elif direction == "right":
+        posXBall+=0.25
+        print(f"PosX {posXBall}")
+        flagRotationBallZ = 0
+        flagRotationBallY=0
+        flagRotationBallX=1
+        angleRotation+=90
+
+
 
 def keyboard_handler(key, x, y):
     global camera_x, camera_y, camera_z, center_x, center_y, center_z, lookat_x, lookat_y, lookat_z, drawing_rotation, rotation_x_flag, rotation_y_flag, last_y_drawing_rotation, last_x_drawing_rotation, last_axis_used
@@ -342,8 +470,50 @@ def keyboard_handler(key, x, y):
         rotation_y_flag = 0
         last_axis_used = "x"
     
+    elif key == GLUT_KEY_UP:
+       # lookat_x += MOVE_UNIT * 0.1
+        makeMovements("up")
+        
+        checkSideLimits()
+        
+        
+    elif key == GLUT_KEY_LEFT:
+       # lookat_x += MOVE_UNIT * 0.1
+       # Rotacao eixo X
+        makeMovements("left")
+        checkGoalLineLimits("left")
+        
+        
+    elif key == GLUT_KEY_DOWN:
+       # lookat_x += MOVE_UNIT * 0.1
+       # Rotacionar no eixo Z
+        makeMovements("down")
+        checkSideLimits()
+        
+        
+    elif key == GLUT_KEY_RIGHT:
+        makeMovements("right")
+        checkGoalLineLimits("right")
+        
+        # Rotacionar no eixo X
+       # lookat_x += MOVE_UNIT * 0.1
+        
+    elif key == b'0':
+        # TODO definir limite de cima
+        posYBall+=0.25
+       # lookat_x += MOVE_UNIT * 0.1
+        
+    elif key == b'1':
+        newYPos = posYBall-0.25
+        if newYPos>=0:
+            posYBall-=0.25
+       # lookat_x += MOVE_UNIT * 0.1
+
+    
     move_camera()
     glutPostRedisplay()
+
+
 
 glutInit()
 glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB)
@@ -353,5 +523,6 @@ glutCreateWindow("Football Field Simulator")
 init() 
 glutDisplayFunc(display)
 glutKeyboardFunc(keyboard_handler)
+glutSpecialFunc(keyboard_handler)
 
 glutMainLoop()
