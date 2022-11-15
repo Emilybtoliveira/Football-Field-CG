@@ -1,15 +1,21 @@
-from curses import KEY_UP
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
 
+""" camera_x = 0
+camera_y = 2 #30
+camera_z = 4 #30 """
 camera_x = 0
 camera_y = 30
-camera_z = 30
+camera_z = 30 
+""" 
+center_x = 20
+center_y = 3
+center_z = -100 """
 
 center_x = 0
 center_y = 0
-center_z = 0
+center_z = 0 
 
 lookat_x = 0
 lookat_y = 1
@@ -27,7 +33,7 @@ rotation_y_flag = 0
 goalsCounter1 = 0
 goalsCounter2 = 0
 
-posYBall = 2.7
+posYBall = 0.7
 posXBall = 0
 posZBall = 0
 angleRotation = 45
@@ -36,27 +42,29 @@ flagRotationBallX = 0
 flagRotationBallY = 1
 flagRotationBallZ = 0
 
-
-def init():
-    glClearColor(0.0, 0.1, 0.0, 1.0) 
-    #glEnable(GL_DEPTH_TEST)
-    glMatrixMode(GL_MODELVIEW) 
-    gluLookAt (camera_x, camera_y, camera_z,center_x, center_y, center_z,lookat_x, lookat_y, lookat_z)
-    
-    glMatrixMode(GL_PROJECTION)
-    #glFrustum(-3.0, 3.0, 3.0, -3.0, 5.0, 15.0)
-    gluPerspective(45, 640/640, 0.1, 80.0)
-    glMatrixMode(GL_MODELVIEW)     
-    
+#======================== MODELAGEM =====================================
 def drawField():
-    v1 = [ 10.0, 0.0, -5.0]
-    v2 = [-10.0, 0.0, -5.0]
-    v3 = [-10.0, 0.0,  5.0]
-    v4 = [ 10.0, 0.0,  5.0]
-    v5 = [ 10.0, 2.0,  5.0]
-    v6 = [ 10.0, 2.0, -5.0]
-    v7 = [-10.0, 2.0, -5.0]
-    v8 = [-10.0, 2.0,  5.0]
+    v1 = [ 40.0, 0.0, -20.0]
+    v2 = [-40.0, 0.0, -20.0]
+    v3 = [-40.0, 0.0,  20.0]
+    v4 = [ 40.0, 0.0,  20.0]
+    v5 = [ 40.0, 0.5,  20.0]
+    v6 = [ 40.0, 0.5, -20.0]
+    v7 = [-40.0, 0.5, -20.0]
+    v8 = [-40.0, 0.5,  20.0]
+
+    v9 = [100.0, 0.0, -100.0]
+    v10 = [-100.0, 0.0, -100.0]
+    v11 = [-100.0, 0.0,  100.0]
+    v12 = [ 100.0, 0.0,  100.0]
+    
+    glBegin(GL_QUADS) 
+    glColor3f(0.3,0.5,0)
+    glVertex3fv(v9)
+    glVertex3fv(v10)
+    glVertex3fv(v11)
+    glVertex3fv(v12)
+    glEnd()
 
     glBegin(GL_QUADS)  
     glColor3f(0.0, 0.75, 0.0)
@@ -64,49 +72,57 @@ def drawField():
     glVertex3fv(v2)
     glVertex3fv(v3)
     glVertex3fv(v4)
+    glEnd()
 
+    glBegin(GL_QUADS) 
     glColor3f(0.0, 0.75, 0.0)
     glVertex3fv(v1)
     glVertex3fv(v4)
     glVertex3fv(v5)
     glVertex3fv(v6)
+    glEnd()
 
+    glBegin(GL_QUADS) 
     glColor3f(0.0, 0.75, 0.0)
     glVertex3fv(v1)
     glVertex3fv(v2)
-    glVertex3fv(v7)
-    glVertex3fv(v6)
-
-    glColor3f(0.0, 0.75, 0.0)
-    glVertex3fv(v2)
-    glVertex3fv(v3)
-    glVertex3fv(v8)
-    glVertex3fv(v7)
-
-    glColor3f(0.0, 0.75, 0.0)
-    glVertex3fv(v3)
-    glVertex3fv(v8)
-    glVertex3fv(v5)
-    glVertex3fv(v4)
-
-    glColor3f(0.0, 1.0, 0.0) #top
-    glVertex3fv(v5)
-    glVertex3fv(v8)
     glVertex3fv(v7)
     glVertex3fv(v6)
     glEnd()
 
+    glBegin(GL_QUADS) 
+    glColor3f(0.0, 0.75, 0.0)
+    glVertex3fv(v2)
+    glVertex3fv(v3)
+    glVertex3fv(v8)
+    glVertex3fv(v7)
+    glEnd()
+
+    glBegin(GL_QUADS) 
+    glColor3f(0.0, 0.75, 0.0)#top
+    glVertex3fv(v3)
+    glVertex3fv(v8)
+    glVertex3fv(v5)
+    glVertex3fv(v4)
+    glEnd()
+
+    glBegin(GL_QUADS) 
+    glColor3f(0.0, 0.85, 0.0) #base
+    glVertex3fv(v5)
+    glVertex3fv(v8)
+    glVertex3fv(v7)
+    glVertex3fv(v6)
+    glEnd()  
+
 def drawGoalpost(x_pos):
     glPushMatrix()
+
     glRotate(90, 1, 0, 0)
-    glTranslate(x_pos, 0.5, -5.0)
+    glTranslate(x_pos, 0.5, -3.5)
     cylinder = gluNewQuadric()
     gluQuadricDrawStyle (cylinder, GLU_LINE)
     gluCylinder(cylinder, 0.15, 0.15, 3, 500, 500)
-    """ glPopMatrix()
-
-    glPushMatrix()
-    glRotate(90, 1, 0, 0) """
+   
     glTranslate(0, -3.5, 0.0)
     cylinder = gluNewQuadric()
     gluQuadricDrawStyle (cylinder, GLU_LINE)
@@ -115,10 +131,11 @@ def drawGoalpost(x_pos):
 
     glPushMatrix()
     glRotate(180, 1, 0, 0)
-    glTranslate(x_pos, -5.0, -0.6)
+    glTranslate(x_pos, -3.5, -0.6)
     cylinder = gluNewQuadric()
     gluQuadricDrawStyle (cylinder, GLU_LINE)
     gluCylinder(cylinder, 0.15, 0.15, 3.8, 100, 100)
+
     glPopMatrix()
 
 def drawBall():
@@ -136,6 +153,67 @@ def drawBall():
    
     glPopMatrix()
 
+def drawABleach(y_translation = 0):     
+    glPushMatrix()
+
+    glColor3f(0.8, 0.8,0.8)    
+    
+    glRotate(-90, 1, 0, 0)   
+    height = 1.5
+    x_translation = 0.0
+    glTranslate(0, y_translation, 0)
+
+    for i in range(4):
+        glTranslate(x_translation, 0, 0)
+
+        cylinder = gluNewQuadric()
+        gluQuadricDrawStyle (cylinder, GLU_LINE)
+        gluCylinder(cylinder, 0.05, 0.05, height, 500, 500)
+
+        height += 1.5
+        x_translation -= 1.0
+
+    glRotate(90, 0, 1, 0) 
+    cylinder = gluNewQuadric()
+    gluQuadricDrawStyle (cylinder, GLU_LINE)
+    gluCylinder(cylinder, 0.05, 0.05, (x_translation*-1) + 2, 500, 500)     
+
+    cylinder = gluNewQuadric()
+    gluQuadricDrawStyle (cylinder, GLU_LINE)
+    gluCylinder(cylinder, 0.05, 0.05, (x_translation*-1) + 2, 500, 500) 
+
+    glPopMatrix()
+ 
+def drawBleachers():
+    glTranslate(-30,0,-10)
+    
+    for i in range (3):
+        drawABleach(-40*i)
+
+    
+    glPushMatrix()
+    glRotate(180, 0, 1, 0)  
+    glTranslate(6,6.0,-50)
+    cylinder = gluNewQuadric()
+    gluQuadricDrawStyle (cylinder, GLU_LINE)
+    gluCylinder(cylinder, 0.05, 0.05, 80, 500, 500) 
+    glPopMatrix()
+
+    
+    glColor3f(0.0, 0.7,1.0)
+
+    glTranslate(-0.5, 1.5, 10)
+    glScalef(1.5, -0.5, 20.0)
+    glutSolidCube(1.0)  
+    
+    glTranslate(-1.0, -2.5, 0)
+    glScalef(1.5, 1.0, 1.01)
+    glutSolidCube(1.0)
+
+    glTranslate(-1.1, -3.0, 0)
+    glScalef(1.3, 1.0, 1.01)
+    glutSolidCube(1.0)    
+    
 def bresenhamFieldLines(x1, y1, x2, y2, z1, z2, direction):
     dx = x2 - x1
     dy = y2 - y1
@@ -176,15 +254,16 @@ def bresenhamFieldLines(x1, y1, x2, y2, z1, z2, direction):
     glEnd()
 
 def circleSymmetry(xoffset, zoffset, x, z):
-    glVertex3f(xoffset+x, 2, zoffset+z);
-    glVertex3f(xoffset-x, 2, zoffset+z);
-    glVertex3f(xoffset+x, 2, zoffset-z);
-    glVertex3f(xoffset-x, 2, zoffset-z);
-    glVertex3f(xoffset+z, 2, zoffset+x);
-    glVertex3f(xoffset-z, 2, zoffset+x);
-    glVertex3f(xoffset+z, 2, zoffset-x);
-    glVertex3f(xoffset-z, 2, zoffset-x);
+    glVertex3f(xoffset+x, 0.5, zoffset+z);
+    glVertex3f(xoffset-x, 0.5, zoffset+z);
+    glVertex3f(xoffset+x, 0.5, zoffset-z);
+    glVertex3f(xoffset-x, 0.5, zoffset-z);
+    glVertex3f(xoffset+z, 0.5, zoffset+x);
+    glVertex3f(xoffset-z, 0.5, zoffset+x);
+    glVertex3f(xoffset+z, 0.5, zoffset-x);
+    glVertex3f(xoffset-z, 0.5, zoffset-x);
 
+#======================== BRESENHAM =====================================
 #fonte do algoritmo: https://www.geeksforgeeks.org/bresenhams-circle-drawing-algorithm/
 def bresenhamFieldCircle(r):
     x = 0
@@ -216,8 +295,8 @@ def bresenhamFieldHalfCircle(r, xoffset, zoffset):
 
     glBegin(GL_POINTS)
     glColor3f(1.0, 1.0, 1.0)
-    glVertex3f(xoffset+x, 2, zoffset+z)
-    glVertex3f(xoffset-x, 2, zoffset+z)
+    glVertex3f(xoffset+x, 0.5, zoffset+z)
+    glVertex3f(xoffset-x, 0.5, zoffset+z)
 
     while x < z:
         if (d < 0): 
@@ -228,69 +307,42 @@ def bresenhamFieldHalfCircle(r, xoffset, zoffset):
             x += 0.01
             z -= 0.01        
     
-        glVertex3f(xoffset+x, 2, zoffset+z)
-        glVertex3f(xoffset-x, 2, zoffset+z)   
+        glVertex3f(xoffset+x, 0.5, zoffset+z)
+        glVertex3f(xoffset-x, 0.5, zoffset+z)   
     glEnd()
 
 def drawFieldLines():
-    bresenhamFieldLines(-9.0, 2.0, 9.0, 2.0, 2.7, 2.7, "H")
-    bresenhamFieldLines(-9.0, 2.0, 9.0, 2.0, -5.5, -5.5, "H")
-    bresenhamFieldLines(-9.0, 2.0, 9.0, 2.0, 2.7, -5.5, "V")
-    bresenhamFieldLines(9.0, 2.0, 9.0, 2.0, 2.7, -5.5, "V")
-    bresenhamFieldLines(0, 2.0, 0, 2.0, 2.7, -5.5, "V")
+    bresenhamFieldLines(-33.0, 0.5, 33.0, 0.5, 15.0, 15.0, "H")
+    bresenhamFieldLines(-33.0, 0.5, 33.0, 0.5, -17.8, -17.8, "H")
+    bresenhamFieldLines(-33.0, 0.5, 33.0, 0.5, 15.0, -17.8, "V")
+    bresenhamFieldLines(33.0, 0.5, 33.0, 0.5, 15.0, -17.8, "V")
+    bresenhamFieldLines(0, 0.5, 0, 0.5, 15.0, -17.8, "V")
     
-    bresenhamFieldLines(-7.5, 2.0, 9.0, 2.0, 1.0, -3.5, "V")
-    bresenhamFieldLines(-9.0, 2.0, -7.5, 2.0, -3.5, -3.5, "H")
-    bresenhamFieldLines(-9.0, 2.0, -7.5, 2.0, 1.0, -3.5, "H")
+    #LEFT SIDE
+    bresenhamFieldLines(-30.5, 0.5, -32.0, 0.5, 1.0, -3.5, "V")
+    bresenhamFieldLines(-33.0, 0.5, -30.5, 0.5, -3.5, -3.5, "H")
+    bresenhamFieldLines(-33.0, 0.5, -30.5, 0.5, 1.0, -3.5, "H")
 
-    bresenhamFieldLines(-6.5, 2.0, 9.0, 2.0, 2, -4.5, "V")
-    bresenhamFieldLines(-9.0, 2.0, -6.5, 2.0, -4.5, -5.5, "H")
-    bresenhamFieldLines(-9.0, 2.0, -6.5, 2.0, 2.0, -5.5, "H")
+    bresenhamFieldLines(-27.5, 0.5, 29.0, 0.5, 4.0, -6.5, "V")
+    bresenhamFieldLines(-33.0, 0.5, -27.5, 0.5, -6.5, -7.5, "H")
+    bresenhamFieldLines(-33.0, 0.5, -27.5, 0.5, 4.0, -7.5, "H")
 
-    bresenhamFieldLines(7.5, 2.0, 9.0, 2.0, 1.0, -3.5, "V")
-    bresenhamFieldLines(7.5, 2.0, 9.0, 2.0, -3.5, -3.5, "H")
-    bresenhamFieldLines(7.5, 2.0, 9.0, 2.0, 1.0, -3.5, "H")
+    #RIGHT SIDE
+    bresenhamFieldLines(30.5, 0.5, 32.0, 0.5, 1.0, -3.5, "V")
+    bresenhamFieldLines(30.5, 0.5, 33.0, 0.5, -3.5, -3.5, "H")
+    bresenhamFieldLines(30.5, 0.5, 33.0, 0.5, 1.0, -3.5, "H")
 
-    bresenhamFieldLines(6.5, 2.0, -9.0, 2.0, 2, -4.5, "V")
-    bresenhamFieldLines(6.5, 2.0, 9.0, 2.0, -4.5, -5.5, "H")
-    bresenhamFieldLines(6.5, 2.0, 9.0, 2.0, 2.0, -5.5, "H")
+    bresenhamFieldLines(27.5, 0.5, -32.0, 0.5, 4.0, -6.5, "V")
+    bresenhamFieldLines(27.5, 0.5, 33.0, 0.5, -6.5, -7.5, "H")
+    bresenhamFieldLines(27.5, 0.5, 33.0, 0.5, 4.0, -7.5, "H")
 
-    bresenhamFieldCircle(1.5)
+    bresenhamFieldCircle(2.5)
     glRotate(90,0,1,0)
-    bresenhamFieldHalfCircle(1.5, 1, -7.5)
+    bresenhamFieldHalfCircle(2.5, 1, -29.2)
     glRotate(180,0,1,0)
-    bresenhamFieldHalfCircle(1.5, -1.0, -7.5)
+    bresenhamFieldHalfCircle(2.5, -1.0, -29.2)
 
-def display():
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) # Clear color and depth buffer
-    print(drawing_rotation, rotation_x_flag, rotation_y_flag, 0)
-    glRotate(drawing_rotation, rotation_x_flag, rotation_y_flag, 0)
-    glMatrixMode(GL_MODELVIEW) 
-
-    drawField()    
-    
-    drawBall()
-
-    glTranslate(0, 0, 1.4)
-    drawGoalpost(9.2)
-    drawGoalpost(-9.2)
-    displayScores()
-
-    drawFieldLines()
-
-    glutSwapBuffers()
-
-def move_camera():
-    glMatrixMode(GL_MODELVIEW) 
-    glLoadIdentity()
-    gluLookAt(camera_x, camera_y, camera_z,
-              center_x, center_y, center_z,
-              lookat_x, lookat_y, lookat_z)
-    print(f"posicao da camera: ({camera_x}, {camera_y}, {camera_z})")
-    print(f"posicao do centro: ({center_x}, {center_y}, {center_z})")
-
-# GOALS / SCORE
-
+#======================== PLACAR E GOL =====================================
 def textScore(x, y, color, text):
     glColor3fv(color)
     glWindowPos2f(x, y)
@@ -301,8 +353,8 @@ def displayScores():
     textScore(100, 100, (1, 0, 0), str(goalsCounter1))
     textScore(150, 100, (1, 0, 0), "x")
     textScore(200, 100, (1, 0, 0), str(goalsCounter2))
-    # glutSwapBuffers()
-    # glutPostRedisplay()
+    #glutSwapBuffers()
+    #glutPostRedisplay()
 
 def gol():
 
@@ -310,12 +362,10 @@ def gol():
     glFlush()
     displayScores()
 
-
 def checkSideLimits():
     if posZBall>=4.25 or posZBall<=-4.25:
         # retornar pro centro
-        returnBallCenter()
-        
+        returnBallCenter()    
 
 def returnBallCenter():
     global posYBall,posXBall,posZBall,angleRotation, flagRotationBallX, flagRotationBallY, flagRotationBallZ
@@ -334,8 +384,6 @@ def checkIfHitsBar():
 
     if posXBall == -8.5 or posXBall == 8.5:
         return posZBall in [-1.5, -1.75,1.75, 2]
-
-    
 
 def checkGoalLineLimits(side):
     global goalsCounter1, goalsCounter2, posXBall
@@ -362,14 +410,14 @@ def checkGoalLineLimits(side):
             print("GOL")
 
         returnBallCenter()      
-
   
+#======================== CAMERA E MOVIMENTAÇÃO  =====================================
 def makeMovements(direction):
     global posZBall, angleRotation, flagRotationBallZ, flagRotationBallX, flagRotationBallY, posZBall, posXBall, posYBall
     
     if direction == "up":
         posZBall-=0.25
-        print(f"PosZ {posZBall}")
+        #print(f"PosZ {posZBall}")
         flagRotationBallX = 0
         flagRotationBallY=0
         flagRotationBallZ=1
@@ -377,14 +425,14 @@ def makeMovements(direction):
 
     elif direction == "down":
         posZBall+=0.25
-        print(f"PosZ {posZBall}")
+        #print(f"PosZ {posZBall}")
         flagRotationBallX = 0
         flagRotationBallY=0
         flagRotationBallZ=1
         angleRotation-=90
     elif direction == "left":
         posXBall-=0.25
-        print(f"PosX {posXBall}")
+       # print(f"PosX {posXBall}")
         flagRotationBallZ= 0
         flagRotationBallY=0
         flagRotationBallX=1
@@ -392,13 +440,18 @@ def makeMovements(direction):
         
     elif direction == "right":
         posXBall+=0.25
-        print(f"PosX {posXBall}")
+        #print(f"PosX {posXBall}")
         flagRotationBallZ = 0
         flagRotationBallY=0
         flagRotationBallX=1
         angleRotation+=90
 
-
+def move_camera():
+    glMatrixMode(GL_MODELVIEW) 
+    glLoadIdentity()
+    gluLookAt(camera_x, camera_y, camera_z,
+              center_x, center_y, center_z,
+              lookat_x, lookat_y, lookat_z)
 
 def keyboard_handler(key, x, y):
     global camera_x, camera_y, camera_z, center_x, center_y, center_z, lookat_x, lookat_y, lookat_z, drawing_rotation, rotation_x_flag, rotation_y_flag, last_y_drawing_rotation, last_x_drawing_rotation, last_axis_used
@@ -507,12 +560,44 @@ def keyboard_handler(key, x, y):
         newYPos = posYBall-0.25
         if newYPos>=0:
             posYBall-=0.25
-       # lookat_x += MOVE_UNIT * 0.1
-
-    
+       # lookat_x += MOVE_UNIT * 0.1    
     move_camera()
     glutPostRedisplay()
 
+
+#======================== FUNÇÕES GERAIS  =====================================
+def display():
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) # Clear color and depth buffer
+    #print(drawing_rotation, rotation_x_flag, rotation_y_flag, 0)
+    glRotate(drawing_rotation, rotation_x_flag, rotation_y_flag, 0)
+    glMatrixMode(GL_MODELVIEW) 
+
+    drawField()    
+    
+    drawBall()
+
+    glTranslate(0, 0, 1.4)
+    drawGoalpost(33.2)
+    drawGoalpost(-33.2)
+
+    displayScores()
+
+    drawFieldLines()
+    
+    drawBleachers()
+
+    glutSwapBuffers()
+
+def init():
+    glClearColor(0.0, 0.1, 0.0, 1.0) 
+    #glEnable(GL_DEPTH_TEST)
+    glMatrixMode(GL_MODELVIEW) 
+    gluLookAt (camera_x, camera_y, camera_z,center_x, center_y, center_z,lookat_x, lookat_y, lookat_z)
+    
+    glMatrixMode(GL_PROJECTION)
+    #glFrustum(-3.0, 3.0, 3.0, -3.0, 5.0, 15.0)
+    gluPerspective(45, 640/640, 0.1, 400.0)
+    glMatrixMode(GL_MODELVIEW)     
 
 
 glutInit()
