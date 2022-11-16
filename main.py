@@ -1,6 +1,9 @@
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
+from PIL import Image
+import numpy as np
+
 
 """ camera_x = 0
 camera_y = 2 #30
@@ -58,13 +61,23 @@ def drawField():
     v11 = [-100.0, 0.0,  100.0]
     v12 = [ 100.0, 0.0,  100.0]
     
+
+    
+    # parte externa ao campo
+    glEnable(GL_TEXTURE_2D)
     glBegin(GL_QUADS) 
     glColor3f(0.3,0.5,0)
     glVertex3fv(v9)
+    glTexCoord2f(0, 1)
     glVertex3fv(v10)
+    glTexCoord2f(0, 0)
     glVertex3fv(v11)
+    glTexCoord2f(1,0)
     glVertex3fv(v12)
+    glTexCoord2f(1, 1)
     glEnd()
+
+    glDisable(GL_TEXTURE_2D)
 
     glBegin(GL_QUADS)  
     glColor3f(0.0, 0.75, 0.0)
@@ -98,22 +111,37 @@ def drawField():
     glVertex3fv(v7)
     glEnd()
 
+    
+    # glEnable(GL_TEXTURE_2D)
     glBegin(GL_QUADS) 
-    glColor3f(0.0, 0.75, 0.0)#top
+    # glColor3f(0.0, 0.75, 0.0)#baixo do cmapo
+    glColor3f(0.54, 0.27, 0.07)#baixo do cmapo
     glVertex3fv(v3)
+    # glTexCoord2f(0, 1)
     glVertex3fv(v8)
+    # glTexCoord2f(0, 0)
     glVertex3fv(v5)
+    # glTexCoord2f(1, 0)
     glVertex3fv(v4)
+    # glTexCoord2f(1, 1)
     glEnd()
+    # glDisable(GL_TEXTURE_2D)
+    
+    glEnable(GL_TEXTURE_2D)
 
     glBegin(GL_QUADS) 
-    glColor3f(0.0, 0.85, 0.0) #base
+    glColor3f(0.0, 0.85, 0.0) #base do capo
     glVertex3fv(v5)
+    glTexCoord2f(0, 1)
     glVertex3fv(v8)
+    glTexCoord2f(0, 0)
     glVertex3fv(v7)
+    glTexCoord2f(1, 0)
     glVertex3fv(v6)
+    glTexCoord2f(1, 1)
     glEnd()  
 
+    glDisable(GL_TEXTURE_2D)
 def drawGoalpost(x_pos):
     glPushMatrix()
 
@@ -594,6 +622,39 @@ def init():
     glMatrixMode(GL_MODELVIEW) 
     gluLookAt (camera_x, camera_y, camera_z,center_x, center_y, center_z,lookat_x, lookat_y, lookat_z)
     
+    # textura do gramado
+    
+    img = Image.open("gramados/gramado2.jpg")
+    img_data = np.array(list(img.getdata()), np.int8)
+    textID = glGenTextures(1)
+    glBindTexture(GL_TEXTURE_2D,textID)
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL)
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img.size[0], img.size[1], 0, GL_RGB, GL_UNSIGNED_BYTE, img_data)
+    
+
+    
+    # img2 = Image.open("asfalto/t1.jpeg")
+    # img2_data = np.array(list(img2.getdata()), np.int8)
+    # textID2 = glGenTextures(1)
+    # glBindTexture(GL_TEXTURE_2D,textID2)
+    # glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
+    # glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP)
+    # glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP)
+    # glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
+    # glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
+    # glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+    # glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+    # glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL)
+    # glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img2.size[0], img2.size[1], 0, GL_RGB, GL_UNSIGNED_BYTE, img2_data)
+   
+  
     glMatrixMode(GL_PROJECTION)
     #glFrustum(-3.0, 3.0, 3.0, -3.0, 5.0, 15.0)
     gluPerspective(45, 640/640, 0.1, 400.0)
