@@ -400,14 +400,15 @@ def gol():
     displayScores()
 
 def checkSideLimits():
-    if posZBall>=4.25 or posZBall<=-4.25:
+    # mudar isso aqui!
+    if posZBall>=17.5 or posZBall<=-17.5:
         # retornar pro centro
         returnBallCenter()    
 
 def returnBallCenter():
     global posYBall,posXBall,posZBall,angleRotation, flagRotationBallX, flagRotationBallY, flagRotationBallZ
 
-    posYBall = 2.7
+    posYBall = 0.7
     posXBall = 0
     posZBall = 0
     angleRotation = 45
@@ -418,8 +419,8 @@ def returnBallCenter():
 
 def checkIfHitsBar():
     global posYBall,posXBall,posZBall
-
-    if posXBall == -8.5 or posXBall == 8.5:
+    # mudar aqui!
+    if posXBall == -34 or posXBall == 34:
         return posZBall in [-1.5, -1.75,1.75, 2]
 
 def checkGoalLineLimits(side):
@@ -432,15 +433,16 @@ def checkGoalLineLimits(side):
         else:
             posXBall-=0.25
         
-
-    if posXBall>=9.25:
+    # mudar isso aqui
+    if posXBall>=33.5:
         if posZBall<2.5 and posZBall>-1.5:
             goalsCounter1+=1
             print("GOL")
 
         returnBallCenter()
         
-    elif posXBall<=-9.5:
+    # mudar isso aqui
+    elif posXBall<=-33.5:
 
         if posZBall<2.5 and posZBall>-1.5:
             goalsCounter2+=1
@@ -628,7 +630,7 @@ def display():
     glutSwapBuffers()
 
 
-def textura(source):
+def textura1(source):
     img = Image.open(source)
     img_data = np.array(list(img.getdata()), np.int8)
     textID = glGenTextures(1)
@@ -644,6 +646,23 @@ def textura(source):
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img.size[0], img.size[1], 0, GL_RGB, GL_UNSIGNED_BYTE, img_data)
     return textID
 
+def textura2(source):
+    img = Image.open(source)
+    img_data = np.array(list(img.getdata()), np.int8)
+    textID = glGenTextures(1)
+    glBindTexture(GL_TEXTURE_2D,textID)
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL)
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img.size[0], img.size[1], 0, GL_RGB, GL_UNSIGNED_BYTE, img_data)
+    glGenerateMipmap(GL_TEXTURE_2D)
+    return textID
+
 def init():
     global textID2, textID
 
@@ -653,8 +672,8 @@ def init():
     gluLookAt (camera_x, camera_y, camera_z,center_x, center_y, center_z,lookat_x, lookat_y, lookat_z)
     
     # textura do gramado
-    textID = textura("gramados/gramado2.jpg")
-    textID2 = textura("asfalto/tl.jpg")
+    textID = textura1("gramados/gramado2.jpg")
+    textID2 = textura2("gramados/marca.jpg")
 
     
   
