@@ -45,8 +45,14 @@ flagRotationBallX = 0
 flagRotationBallY = 1
 flagRotationBallZ = 0
 
+textID2 = 0
+textID = 0
+
+#TODO fazer uma função para as texturas!
+
 #======================== MODELAGEM =====================================
 def drawField():
+    global textID2, textID
     v1 = [ 40.0, 0.0, -20.0]
     v2 = [-40.0, 0.0, -20.0]
     v3 = [-40.0, 0.0,  20.0]
@@ -64,6 +70,7 @@ def drawField():
 
     
     # parte externa ao campo
+    glBindTexture(GL_TEXTURE_2D,textID2)
     glEnable(GL_TEXTURE_2D)
     glBegin(GL_QUADS) 
     glColor3f(0.3,0.5,0)
@@ -127,6 +134,8 @@ def drawField():
     glEnd()
     # glDisable(GL_TEXTURE_2D)
     
+
+    glBindTexture(GL_TEXTURE_2D,textID)
     glEnable(GL_TEXTURE_2D)
 
     glBegin(GL_QUADS) 
@@ -595,13 +604,14 @@ def keyboard_handler(key, x, y):
 
 #======================== FUNÇÕES GERAIS  =====================================
 def display():
+    global textID2, textID
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) # Clear color and depth buffer
     #print(drawing_rotation, rotation_x_flag, rotation_y_flag, 0)
     glRotate(drawing_rotation, rotation_x_flag, rotation_y_flag, 0)
     glMatrixMode(GL_MODELVIEW) 
 
     drawField()    
-    
+        
     drawBall()
 
     glTranslate(0, 0, 1.4)
@@ -614,17 +624,12 @@ def display():
     
     drawBleachers()
 
+
     glutSwapBuffers()
 
-def init():
-    glClearColor(0.0, 0.1, 0.0, 1.0) 
-    #glEnable(GL_DEPTH_TEST)
-    glMatrixMode(GL_MODELVIEW) 
-    gluLookAt (camera_x, camera_y, camera_z,center_x, center_y, center_z,lookat_x, lookat_y, lookat_z)
-    
-    # textura do gramado
-    
-    img = Image.open("gramados/gramado2.jpg")
+
+def textura(source):
+    img = Image.open(source)
     img_data = np.array(list(img.getdata()), np.int8)
     textID = glGenTextures(1)
     glBindTexture(GL_TEXTURE_2D,textID)
@@ -637,23 +642,21 @@ def init():
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL)
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img.size[0], img.size[1], 0, GL_RGB, GL_UNSIGNED_BYTE, img_data)
+    return textID
+
+def init():
+    global textID2, textID
+
+    glClearColor(0.0, 0.1, 0.0, 1.0) 
+    #glEnable(GL_DEPTH_TEST)
+    glMatrixMode(GL_MODELVIEW) 
+    gluLookAt (camera_x, camera_y, camera_z,center_x, center_y, center_z,lookat_x, lookat_y, lookat_z)
     
+    # textura do gramado
+    textID = textura("gramados/gramado2.jpg")
+    textID2 = textura("asfalto/tl.jpg")
 
     
-    # img2 = Image.open("asfalto/t1.jpeg")
-    # img2_data = np.array(list(img2.getdata()), np.int8)
-    # textID2 = glGenTextures(1)
-    # glBindTexture(GL_TEXTURE_2D,textID2)
-    # glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
-    # glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP)
-    # glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP)
-    # glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
-    # glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
-    # glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
-    # glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
-    # glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL)
-    # glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img2.size[0], img2.size[1], 0, GL_RGB, GL_UNSIGNED_BYTE, img2_data)
-   
   
     glMatrixMode(GL_PROJECTION)
     #glFrustum(-3.0, 3.0, 3.0, -3.0, 5.0, 15.0)
