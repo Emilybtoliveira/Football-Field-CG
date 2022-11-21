@@ -1,6 +1,9 @@
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.GLUT import *
+from PIL import Image
+import numpy as np
+
 
 """ camera_x = 0
 camera_y = 2 #30
@@ -42,8 +45,14 @@ flagRotationBallX = 0
 flagRotationBallY = 1
 flagRotationBallZ = 0
 
+textID2 = 0
+textID = 0
+
+#TODO fazer uma função para as texturas!
+
 #======================== MODELAGEM =====================================
 def drawField():
+    global textID2, textID
     v1 = [ 40.0, 0.0, -20.0]
     v2 = [-40.0, 0.0, -20.0]
     v3 = [-40.0, 0.0,  20.0]
@@ -58,13 +67,24 @@ def drawField():
     v11 = [-100.0, 0.0,  100.0]
     v12 = [ 100.0, 0.0,  100.0]
     
+
+    
+    # parte externa ao campo
+    glBindTexture(GL_TEXTURE_2D,textID2)
+    glEnable(GL_TEXTURE_2D)
     glBegin(GL_QUADS) 
     glColor3f(0.3,0.5,0)
     glVertex3fv(v9)
+    glTexCoord2f(0, 1)
     glVertex3fv(v10)
+    glTexCoord2f(0, 0)
     glVertex3fv(v11)
+    glTexCoord2f(1,0)
     glVertex3fv(v12)
+    glTexCoord2f(1, 1)
     glEnd()
+
+    glDisable(GL_TEXTURE_2D)
 
     glBegin(GL_QUADS)  
     glColor3f(0.0, 0.75, 0.0)
@@ -98,22 +118,39 @@ def drawField():
     glVertex3fv(v7)
     glEnd()
 
+    
+    # glEnable(GL_TEXTURE_2D)
     glBegin(GL_QUADS) 
-    glColor3f(0.0, 0.75, 0.0)#top
+    # glColor3f(0.0, 0.75, 0.0)#baixo do cmapo
+    glColor3f(0.54, 0.27, 0.07)#baixo do cmapo
     glVertex3fv(v3)
+    # glTexCoord2f(0, 1)
     glVertex3fv(v8)
+    # glTexCoord2f(0, 0)
     glVertex3fv(v5)
+    # glTexCoord2f(1, 0)
     glVertex3fv(v4)
+    # glTexCoord2f(1, 1)
     glEnd()
+    # glDisable(GL_TEXTURE_2D)
+    
+
+    glBindTexture(GL_TEXTURE_2D,textID)
+    glEnable(GL_TEXTURE_2D)
 
     glBegin(GL_QUADS) 
-    glColor3f(0.0, 0.85, 0.0) #base
+    glColor3f(0.0, 0.85, 0.0) #base do capo
     glVertex3fv(v5)
+    glTexCoord2f(0, 1)
     glVertex3fv(v8)
+    glTexCoord2f(0, 0)
     glVertex3fv(v7)
+    glTexCoord2f(1, 0)
     glVertex3fv(v6)
+    glTexCoord2f(1, 1)
     glEnd()  
 
+    glDisable(GL_TEXTURE_2D)
 def drawGoalpost(x_pos):
     glPushMatrix()
 
@@ -370,14 +407,15 @@ def gol():
     displayScores()
 
 def checkSideLimits():
-    if posZBall>=4.25 or posZBall<=-4.25:
+    # mudar isso aqui!
+    if posZBall>=17.5 or posZBall<=-17.5:
         # retornar pro centro
         returnBallCenter()    
 
 def returnBallCenter():
     global posYBall,posXBall,posZBall,angleRotation, flagRotationBallX, flagRotationBallY, flagRotationBallZ
 
-    posYBall = 2.7
+    posYBall = 0.7
     posXBall = 0
     posZBall = 0
     angleRotation = 45
@@ -388,8 +426,8 @@ def returnBallCenter():
 
 def checkIfHitsBar():
     global posYBall,posXBall,posZBall
-
-    if posXBall == -8.5 or posXBall == 8.5:
+    # mudar aqui!
+    if posXBall == -34 or posXBall == 34:
         return posZBall in [-1.5, -1.75,1.75, 2]
 
 def checkGoalLineLimits(side):
@@ -402,15 +440,16 @@ def checkGoalLineLimits(side):
         else:
             posXBall-=0.25
         
-
-    if posXBall>=9.25:
+    # mudar isso aqui
+    if posXBall>=33.5:
         if posZBall<2.5 and posZBall>-1.5:
             goalsCounter1+=1
             print("GOL")
 
         returnBallCenter()
         
-    elif posXBall<=-9.5:
+    # mudar isso aqui
+    elif posXBall<=-33.5:
 
         if posZBall<2.5 and posZBall>-1.5:
             goalsCounter2+=1
@@ -574,13 +613,14 @@ def keyboard_handler(key, x, y):
 
 #======================== FUNÇÕES GERAIS  =====================================
 def display():
+    global textID2, textID
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) # Clear color and depth buffer
     #print(drawing_rotation, rotation_x_flag, rotation_y_flag, 0)
     glRotate(drawing_rotation, rotation_x_flag, rotation_y_flag, 0)
     glMatrixMode(GL_MODELVIEW) 
 
     drawField()    
-    
+        
     drawBall()
 
     glTranslate(0, 0, 1.4)
@@ -593,14 +633,57 @@ def display():
     
     drawBleachers()
 
+
     glutSwapBuffers()
 
+
+def textura1(source):
+    img = Image.open(source)
+    img_data = np.array(list(img.getdata()), np.int8)
+    textID = glGenTextures(1)
+    glBindTexture(GL_TEXTURE_2D,textID)
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL)
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img.size[0], img.size[1], 0, GL_RGB, GL_UNSIGNED_BYTE, img_data)
+    return textID
+
+def textura2(source):
+    img = Image.open(source)
+    img_data = np.array(list(img.getdata()), np.int8)
+    textID = glGenTextures(1)
+    glBindTexture(GL_TEXTURE_2D,textID)
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL)
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img.size[0], img.size[1], 0, GL_RGB, GL_UNSIGNED_BYTE, img_data)
+    glGenerateMipmap(GL_TEXTURE_2D)
+    return textID
+
 def init():
+    global textID2, textID
+
     glClearColor(0.0, 0.1, 0.0, 1.0) 
     #glEnable(GL_DEPTH_TEST)
     glMatrixMode(GL_MODELVIEW) 
     gluLookAt (camera_x, camera_y, camera_z,center_x, center_y, center_z,lookat_x, lookat_y, lookat_z)
     
+    # textura do gramado
+    textID = textura1("gramados/gramado2.jpg")
+    textID2 = textura2("gramados/marca.jpg")
+
+    
+  
     glMatrixMode(GL_PROJECTION)
     #glFrustum(-3.0, 3.0, 3.0, -3.0, 5.0, 15.0)
     gluPerspective(45, 640/640, 0.1, 400.0)
