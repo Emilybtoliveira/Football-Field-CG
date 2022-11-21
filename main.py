@@ -153,7 +153,7 @@ def drawBall():
    
     glPopMatrix()
 
-def drawABleach(y_translation = 0):     
+def drawBleachStructure(y_translation = 0):     
     glPushMatrix()
 
     glColor3f(0.8, 0.8,0.8)    
@@ -184,16 +184,16 @@ def drawABleach(y_translation = 0):
 
     glPopMatrix()
  
-def drawBleachers():
-    glTranslate(-30,0,-10)
+def drawABleach():
+    glTranslate(-30,0,-40)
     
     for i in range (3):
-        drawABleach(-40*i)
+        drawBleachStructure(-40*i)
 
     
     glPushMatrix()
     glRotate(180, 0, 1, 0)  
-    glTranslate(6,6.0,-50)
+    glTranslate(6,6.0,-80)
     cylinder = gluNewQuadric()
     gluQuadricDrawStyle (cylinder, GLU_LINE)
     gluCylinder(cylinder, 0.05, 0.05, 80, 500, 500) 
@@ -202,18 +202,25 @@ def drawBleachers():
     
     glColor3f(0.0, 0.7,1.0)
 
-    glTranslate(-0.5, 1.5, 10)
-    glScalef(1.5, -0.5, 20.0)
+    glTranslate(-0.5, 1.5, 40)
+    glScalef(1.5, -0.5, 80.0)
     glutSolidCube(1.0)  
     
     glTranslate(-1.0, -2.5, 0)
-    glScalef(1.5, 1.0, 1.01)
+    glScalef(1.5, 1.0, 1.0)
     glutSolidCube(1.0)
 
     glTranslate(-1.1, -3.0, 0)
-    glScalef(1.3, 1.0, 1.01)
+    glScalef(1.3, 1.0, 1.0)
     glutSolidCube(1.0)    
     
+def drawBleachers():
+    drawABleach()
+
+    glRotate(180, 0,1,0)
+
+    drawABleach()
+
 def bresenhamFieldLines(x1, y1, x2, y2, z1, z2, direction):
     dx = x2 - x1
     dy = y2 - y1
