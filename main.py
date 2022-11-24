@@ -210,6 +210,7 @@ def drawBleachStructure(y_translation = 0):
         height += 1.5
         x_translation -= 1.0
 
+    
     glRotate(90, 0, 1, 0) 
     cylinder = gluNewQuadric()
     gluQuadricDrawStyle (cylinder, GLU_LINE)
@@ -219,27 +220,74 @@ def drawBleachStructure(y_translation = 0):
     gluQuadricDrawStyle (cylinder, GLU_LINE)
     gluCylinder(cylinder, 0.05, 0.05, (x_translation*-1) + 2, 500, 500) 
 
+    
     glPopMatrix()
- 
-def drawABleach():
-    glTranslate(-30,0,-40)
     
-    for i in range (3):
-        drawBleachStructure(-40*i)
+    
+def drawABleachSideRight():
+    glTranslate(40,0,-45) # mudar isso aqui
+    glRotate(-90, 0, 1, 0)
+    lista = [-62,-18]    
+    for i in range (2): #qnt
+        glPushMatrix()
+        drawBleachStructure(lista[i])
+        glTranslate(0,-40,-40)
+        glPopMatrix()
+    
 
-    
     glPushMatrix()
     glRotate(180, 0, 1, 0)  
-    glTranslate(6,6.0,-80)
+    glTranslate(6,6.0,-62)
     cylinder = gluNewQuadric()
     gluQuadricDrawStyle (cylinder, GLU_LINE)
-    gluCylinder(cylinder, 0.05, 0.05, 80, 500, 500) 
+    gluCylinder(cylinder, 0.05, 0.05, 45, 500, 500) 
     glPopMatrix()
 
     
     glColor3f(0.0, 0.7,1.0)
 
+    glPushMatrix()
     glTranslate(-0.5, 1.5, 40)
+    glScalef(1.5, -0.5, 45.0) # mudando esse 80 ja vai ajudar nas coisas!
+    glutSolidCube(1.0)  
+    
+
+    
+    glTranslate(-1.0, -2.5, 0)
+    glScalef(1.1, 1.0, 1)
+    glutSolidCube(1.0)
+    
+
+    
+    glTranslate(-1.1, -3.0, 0)
+    glScalef(1.3, 1.0, 1.0)
+    glutSolidCube(1.0)    
+    
+    glPopMatrix()
+
+
+def drawABleachSideDown():
+    
+    glTranslate(25,0,40) # posicao de tudo
+    glRotate(180, 0, 1, 0)  # fez rodar, só precisa manipular as
+
+    for i in range (3):
+        drawBleachStructure(-40*i)
+
+    
+    glPushMatrix()
+    glRotate(180, 0, 1, 0)  # o que é
+    glTranslate(6,6.0,-80) # movendo algo
+    cylinder2 = gluNewQuadric()
+    gluQuadricDrawStyle (cylinder2, GLU_LINE)
+    gluCylinder(cylinder2, 0.05, 0.05, 80, 500, 500) 
+    glPopMatrix()
+
+    
+    glColor3f(0.0, 0.7,1.0)
+
+    glPushMatrix()
+    glTranslate(-0.5, 1.5, 40) # move as bases
     glScalef(1.5, -0.5, 80.0)
     glutSolidCube(1.0)  
     
@@ -249,14 +297,111 @@ def drawABleach():
 
     glTranslate(-1.1, -3.0, 0)
     glScalef(1.3, 1.0, 1.0)
+    glutSolidCube(1.0)   
+    glPopMatrix()
+    
+def drawABleachSideUp():
+    # 55,0,-60
+    glTranslate(-30,0,-40) # posicao de tudo
+    # glRotate(180, 0, 1, 0)  # fez rodar, só precisa manipular as
+
+    for i in range (3):
+        drawBleachStructure(-40*i)
+
+    
+    glPushMatrix()
+    glRotate(180, 0, 1, 0)  # o que é
+    glTranslate(6,6.0,-80) # movendo algo
+    cylinder2 = gluNewQuadric()
+    gluQuadricDrawStyle (cylinder2, GLU_LINE)
+    gluCylinder(cylinder2, 0.05, 0.05, 80, 500, 500) 
+    glPopMatrix()
+
+    
+    glColor3f(0.0, 0.7,1.0)
+
+    glPushMatrix()
+    glTranslate(-0.5, 1.5, 40) # move as bases
+    glScalef(1.5, -0.5, 80.0)
+    glutSolidCube(1.0)  
+    
+    glTranslate(-1.0, -2.5, 0)
+    glScalef(1.5, 1.0, 1.0)
+    glutSolidCube(1.0)
+
+    glTranslate(-1.1, -3.0, 0)
+    glScalef(1.3, 1.0, 1.0)
+    glutSolidCube(1.0)   
+    glPopMatrix()
+
+def drawABleachSideLeft():
+    glTranslate(-40,0,45) # mudar isso aqui
+    glRotate(90, 0, 1, 0)
+    lista = [-62,-18]    
+    for i in range (2): #qnt
+        glPushMatrix()
+        drawBleachStructure(lista[i])
+        glTranslate(0,-40,-40)
+        glPopMatrix()
+    
+
+    glPushMatrix()
+    glRotate(180, 0, 1, 0)  
+    glTranslate(6,6.0,-62)
+    cylinder = gluNewQuadric()
+    gluQuadricDrawStyle (cylinder, GLU_LINE)
+    gluCylinder(cylinder, 0.05, 0.05, 45, 500, 500) 
+    glPopMatrix()
+
+    
+    glColor3f(0.0, 0.7,1.0)
+
+    glPushMatrix()
+    glTranslate(-0.5, 1.5, 40)
+    glScalef(1.5, -0.5, 45.0) # mudando esse 80 ja vai ajudar nas coisas!
+    glutSolidCube(1.0)  
+    
+
+    
+    glTranslate(-1.0, -2.5, 0)
+    glScalef(1.1, 1.0, 1)
+    glutSolidCube(1.0)
+    
+
+    
+    glTranslate(-1.1, -3.0, 0)
+    glScalef(1.3, 1.0, 1.0)
     glutSolidCube(1.0)    
     
+    glPopMatrix()
+
+    
+
 def drawBleachers():
-    drawABleach()
+    # Laterais
+    glPushMatrix()
+    drawABleachSideRight() # lateral
+    glPopMatrix()
 
-    glRotate(180, 0,1,0)
+    glPushMatrix()
+    drawABleachSideUp()
+    
+    glPopMatrix()
 
-    drawABleach()
+    glPushMatrix()
+    drawABleachSideDown()
+    glPopMatrix()
+    # Fundos do campo
+
+    glPushMatrix()
+    drawABleachSideLeft()
+    glPopMatrix()
+
+    #TODO diminuir as arquibancadas e girar elas!
+    # TODO resolver o posicionamento!
+    
+    
+
 
 def bresenhamFieldLines(x1, y1, x2, y2, z1, z2, direction):
     dx = x2 - x1
