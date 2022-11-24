@@ -825,7 +825,7 @@ def init():
     
     # textura do gramado
     textID = textura1("gramados/gramado2.jpg")
-    textID2 = textura2("gramados/marca.jpg")
+    # textID2 = textura2("gramados/marca.jpg")
 
     
   
