@@ -47,6 +47,8 @@ flagRotationBallZ = 0
 
 textID2 = 0
 textID = 0
+textIDArq = 0
+ballTextID = 0
 
 #TODO fazer uma função para as texturas!
 
@@ -176,7 +178,7 @@ def drawGoalpost(x_pos):
     glPopMatrix()
 
 def drawBall():
-    global posYBall,posXBall, posZBall, angleRotation, flagRotationBallX, flagRotationBallY, flagRotationBallZ
+    global posYBall,posXBall, posZBall, angleRotation, flagRotationBallX, flagRotationBallY, flagRotationBallZ, ballTextID
 
     glFlush() # para apagar a primeira e add a segunda
     glColor3f(1.0, 1.0, 1.0)
@@ -186,7 +188,13 @@ def drawBall():
    
     glRotatef(angleRotation, flagRotationBallX, flagRotationBallY, flagRotationBallZ)
     # o 1 é em qual eixo tem que ser feita a rotacao
-    glutWireSphere (0.5, 20, 20)
+    glBindTexture(GL_TEXTURE_2D,ballTextID)
+    glEnable(GL_TEXTURE_2D)
+    bola = gluNewQuadric()
+    gluQuadricTexture(bola,GL_TRUE)
+    gluSphere(bola,0.5, 20, 20)
+    glTexCoord2f(1, 1)
+    glDisable(GL_TEXTURE_2D)
    
     glPopMatrix()
 
@@ -301,9 +309,10 @@ def drawABleachSideDown():
     glPopMatrix()
     
 def drawABleachSideUp():
+    global textIDArq
     # 55,0,-60
     glTranslate(-30,0,-40) # posicao de tudo
-    # glRotate(180, 0, 1, 0)  # fez rodar, só precisa manipular as
+    
 
     for i in range (3):
         drawBleachStructure(-40*i)
@@ -320,18 +329,30 @@ def drawABleachSideUp():
     
     glColor3f(0.0, 0.7,1.0)
 
+    glBindTexture(GL_TEXTURE_2D,textIDArq)
+    glEnable(GL_TEXTURE_2D)
+    glEnable(GL_TEXTURE_GEN_S) 
+    glEnable(GL_TEXTURE_GEN_T)
     glPushMatrix()
     glTranslate(-0.5, 1.5, 40) # move as bases
     glScalef(1.5, -0.5, 80.0)
-    glutSolidCube(1.0)  
-    
+    glutSolidCube(1.0)   # baixo
+
+    glTexCoord2f(1,1)
+
     glTranslate(-1.0, -2.5, 0)
     glScalef(1.5, 1.0, 1.0)
-    glutSolidCube(1.0)
+    glutSolidCube(1.0) # meio
+    glTexCoord2f(0,1)
+
 
     glTranslate(-1.1, -3.0, 0)
     glScalef(1.3, 1.0, 1.0)
-    glutSolidCube(1.0)   
+    glutSolidCube(1.0)   # cima!
+    glTexCoord2f(1,0)
+    glDisable(GL_TEXTURE_2D)
+    glDisable(GL_TEXTURE_GEN_S)
+    glDisable(GL_TEXTURE_GEN_T)
     glPopMatrix()
 
 def drawABleachSideLeft():
@@ -397,8 +418,6 @@ def drawBleachers():
     drawABleachSideLeft()
     glPopMatrix()
 
-    #TODO diminuir as arquibancadas e girar elas!
-    # TODO resolver o posicionamento!
     
     
 
@@ -535,13 +554,18 @@ def drawFieldLines():
 def textScore(x, y, color, text):
     glColor3fv(color)
     glWindowPos2f(x, y)
-    glutBitmapString(GLUT_BITMAP_TIMES_ROMAN_24, text.encode('ascii'))
+    glutBitmapString(GLUT_BITMAP_TIMES_ROMAN_24, text.encode('utf8'))
 
 def displayScores():
     # glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-    textScore(100, 100, (1, 0, 0), str(goalsCounter1))
-    textScore(150, 100, (1, 0, 0), "x")
-    textScore(200, 100, (1, 0, 0), str(goalsCounter2))
+    
+    textScore(95, 125, (1, 1, 1), "__________")
+    textScore(92, 100, (1, 1, 1), "|")
+    textScore(100, 100, (1, 1, 1), str(goalsCounter1))
+    textScore(150, 100, (1, 1, 1), "X")
+    textScore(200, 100, (1, 1, 1), str(goalsCounter2))
+    textScore(220, 100, (1, 1, 1), "|")
+    textScore(95, 100, (1, 1, 1), "__________")
     #glutSwapBuffers()
     #glutPostRedisplay()
 
@@ -758,7 +782,7 @@ def keyboard_handler(key, x, y):
 
 #======================== FUNÇÕES GERAIS  =====================================
 def display():
-    global textID2, textID
+    
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) # Clear color and depth buffer
     #print(drawing_rotation, rotation_x_flag, rotation_y_flag, 0)
     glRotate(drawing_rotation, rotation_x_flag, rotation_y_flag, 0)
@@ -772,65 +796,66 @@ def display():
     drawGoalpost(33.2)
     drawGoalpost(-33.2)
 
-    displayScores()
 
     drawFieldLines()
     
     drawBleachers()
 
+    displayScores()
 
     glutSwapBuffers()
 
 
-def textura1(source):
-    img = Image.open(source)
-    img_data = np.array(list(img.getdata()), np.int8)
-    textID = glGenTextures(1)
-    glBindTexture(GL_TEXTURE_2D,textID)
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP)
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP)
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
-    glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL)
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img.size[0], img.size[1], 0, GL_RGB, GL_UNSIGNED_BYTE, img_data)
-    return textID
 
-def textura2(source):
-    img = Image.open(source)
+def textura(source,resize,tipocor=GL_RGB,resizesize=0):
+    img = None
+    if resize:
+        img = Image.open(source).resize(resizesize)
+    else:
+        img = Image.open(source)
+        
     img_data = np.array(list(img.getdata()), np.int8)
     textID = glGenTextures(1)
     glBindTexture(GL_TEXTURE_2D,textID)
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP)
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP)
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT)
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL)
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img.size[0], img.size[1], 0, GL_RGB, GL_UNSIGNED_BYTE, img_data)
+
+    
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img.size[0], img.size[1], 0, tipocor, GL_UNSIGNED_BYTE, img_data)
+    
     glGenerateMipmap(GL_TEXTURE_2D)
     return textID
 
 def init():
-    global textID2, textID
+    global textID2, textID, textIDArq, ballTextID
 
     glClearColor(0.0, 0.1, 0.0, 1.0) 
-    #glEnable(GL_DEPTH_TEST)
+    
     glMatrixMode(GL_MODELVIEW) 
     gluLookAt (camera_x, camera_y, camera_z,center_x, center_y, center_z,lookat_x, lookat_y, lookat_z)
     
     # textura do gramado
-    textID = textura1("gramados/gramado2.jpg")
-    # textID2 = textura2("gramados/marca.jpg")
+    textID = textura("gramados/gramado2.jpg",False)
+
+    # textura da arquibancada
+    # textIDArq = textura("arq/acryc2.png",True,GL_RGBA,(125,125))
+
+    # textura da parte externa
+    # textID2 = textura("gramados/marca.jpg")
+    
+    # textura da bola
+    ballTextID = textura("bola/bola3.png",True,GL_RGBA,(125,125))
 
     
   
     glMatrixMode(GL_PROJECTION)
-    #glFrustum(-3.0, 3.0, 3.0, -3.0, 5.0, 15.0)
+    
     gluPerspective(45, 640/640, 0.1, 400.0)
     glMatrixMode(GL_MODELVIEW)     
 
