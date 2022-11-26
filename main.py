@@ -9,8 +9,8 @@ import numpy as np
 camera_y = 2 #30
 camera_z = 4 #30 """
 camera_x = 0
-camera_y = 30
-camera_z = 30 
+camera_y = 110
+camera_z = 110 
 """ 
 center_x = 20
 center_y = 3
@@ -48,6 +48,8 @@ flagRotationBallZ = 0
 textID2 = 0
 textID = 0
 
+day = True
+
 #TODO fazer uma função para as texturas!
 
 #======================== MODELAGEM =====================================
@@ -67,13 +69,14 @@ def drawField():
     v11 = [-100.0, 0.0,  100.0]
     v12 = [ 100.0, 0.0,  100.0]
     
-
-    
     # parte externa ao campo
     glBindTexture(GL_TEXTURE_2D,textID2)
     glEnable(GL_TEXTURE_2D)
+    
     glBegin(GL_QUADS) 
+    glNormal3f(0,1,0)
     glColor3f(0.3,0.5,0)
+    
     glVertex3fv(v9)
     glTexCoord2f(0, 1)
     glVertex3fv(v10)
@@ -82,12 +85,14 @@ def drawField():
     glTexCoord2f(1,0)
     glVertex3fv(v12)
     glTexCoord2f(1, 1)
+    
     glEnd()
 
     glDisable(GL_TEXTURE_2D)
 
     glBegin(GL_QUADS)  
-    glColor3f(0.0, 0.75, 0.0)
+    glNormal3f(0,1,0)
+    glColor3f(0.54, 0.27, 0.07)
     glVertex3fv(v1)
     glVertex3fv(v2)
     glVertex3fv(v3)
@@ -95,7 +100,8 @@ def drawField():
     glEnd()
 
     glBegin(GL_QUADS) 
-    glColor3f(0.0, 0.75, 0.0)
+    glNormal3f(0,1,0)
+    glColor3f(0.54, 0.27, 0.07)
     glVertex3fv(v1)
     glVertex3fv(v4)
     glVertex3fv(v5)
@@ -103,7 +109,8 @@ def drawField():
     glEnd()
 
     glBegin(GL_QUADS) 
-    glColor3f(0.0, 0.75, 0.0)
+    glNormal3f(0,1,0)
+    glColor3f(0.54, 0.27, 0.07)
     glVertex3fv(v1)
     glVertex3fv(v2)
     glVertex3fv(v7)
@@ -111,7 +118,8 @@ def drawField():
     glEnd()
 
     glBegin(GL_QUADS) 
-    glColor3f(0.0, 0.75, 0.0)
+    glNormal3f(0,1,0)
+    glColor3f(0.54, 0.27, 0.07)
     glVertex3fv(v2)
     glVertex3fv(v3)
     glVertex3fv(v8)
@@ -121,8 +129,8 @@ def drawField():
     
     # glEnable(GL_TEXTURE_2D)
     glBegin(GL_QUADS) 
-    # glColor3f(0.0, 0.75, 0.0)#baixo do cmapo
-    glColor3f(0.54, 0.27, 0.07)#baixo do cmapo
+    glNormal3f(0,1,0)
+    glColor3f(0.54, 0.27, 0.07)
     glVertex3fv(v3)
     # glTexCoord2f(0, 1)
     glVertex3fv(v8)
@@ -133,13 +141,18 @@ def drawField():
     # glTexCoord2f(1, 1)
     glEnd()
     # glDisable(GL_TEXTURE_2D)
-    
+
 
     glBindTexture(GL_TEXTURE_2D,textID)
     glEnable(GL_TEXTURE_2D)
 
-    glBegin(GL_QUADS) 
-    glColor3f(0.0, 0.85, 0.0) #base do capo
+    especularidade = [-1.0, -1.0, -1.0, 1.0]
+    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, especularidade)
+    
+    glBegin(GL_QUADS)     
+    glNormal3f(0,1,0)
+    glColor3f(0.0, 0.85, 0.0) #base do campo
+
     glVertex3fv(v5)
     glTexCoord2f(0, 1)
     glVertex3fv(v8)
@@ -151,6 +164,8 @@ def drawField():
     glEnd()  
 
     glDisable(GL_TEXTURE_2D)
+    
+    
 def drawGoalpost(x_pos):
     glPushMatrix()
 
@@ -223,7 +238,6 @@ def drawBleachStructure(y_translation = 0):
     
     glPopMatrix()
     
-    
 def drawABleachSideRight():
     glTranslate(40,0,-45) # mudar isso aqui
     glRotate(-90, 0, 1, 0)
@@ -264,7 +278,6 @@ def drawABleachSideRight():
     glutSolidCube(1.0)    
     
     glPopMatrix()
-
 
 def drawABleachSideDown():
     
@@ -319,6 +332,9 @@ def drawABleachSideUp():
 
     
     glColor3f(0.0, 0.7,1.0)
+    specular = [0.5, 0.5, 0.5, 1.0]
+    glMaterialfv(GL_FRONT, GL_SPECULAR, specular)
+    #glMaterialf(GL_FRONT, GL_SHININESS, 128)
 
     glPushMatrix()
     glTranslate(-0.5, 1.5, 40) # move as bases
@@ -374,9 +390,7 @@ def drawABleachSideLeft():
     glutSolidCube(1.0)    
     
     glPopMatrix()
-
-    
-
+ 
 def drawBleachers():
     # Laterais
     glPushMatrix()
@@ -399,9 +413,6 @@ def drawBleachers():
 
     #TODO diminuir as arquibancadas e girar elas!
     # TODO resolver o posicionamento!
-    
-    
-
 
 def bresenhamFieldLines(x1, y1, x2, y2, z1, z2, direction):
     dx = x2 - x1
@@ -538,7 +549,7 @@ def textScore(x, y, color, text):
     glutBitmapString(GLUT_BITMAP_TIMES_ROMAN_24, text.encode('ascii'))
 
 def displayScores():
-    # glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+    #glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     textScore(100, 100, (1, 0, 0), str(goalsCounter1))
     textScore(150, 100, (1, 0, 0), "x")
     textScore(200, 100, (1, 0, 0), str(goalsCounter2))
@@ -645,8 +656,8 @@ def move_camera():
               lookat_x, lookat_y, lookat_z)
 
 def keyboard_handler(key, x, y):
-    global camera_x, camera_y, camera_z, center_x, center_y, center_z, lookat_x, lookat_y, lookat_z, drawing_rotation, rotation_x_flag, rotation_y_flag, last_y_drawing_rotation, last_x_drawing_rotation, last_axis_used
-    
+    global camera_x, camera_y, camera_z, center_x, center_y, center_z, lookat_x, lookat_y, lookat_z, drawing_rotation, rotation_x_flag, rotation_y_flag, last_y_drawing_rotation, last_x_drawing_rotation, last_axis_used, posYBall, posXBall, posZBall, day
+    print(key)
     if key == b'w': 
         camera_y += 1
         center_y += 1
@@ -714,6 +725,13 @@ def keyboard_handler(key, x, y):
         rotation_y_flag = 0
         last_axis_used = "x"
     
+    elif key == b'l':
+        if day:
+            day = False
+        else:
+            day = True
+
+
     elif key == GLUT_KEY_UP:
        # lookat_x += MOVE_UNIT * 0.1
         makeMovements("up")
@@ -752,12 +770,16 @@ def keyboard_handler(key, x, y):
         if newYPos>=0:
             posYBall-=0.25
        # lookat_x += MOVE_UNIT * 0.1    
+    
+            
     move_camera()
     glutPostRedisplay()
 
 
 #======================== FUNÇÕES GERAIS  =====================================
 def display():
+    ilumination()
+
     global textID2, textID
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT) # Clear color and depth buffer
     #print(drawing_rotation, rotation_x_flag, rotation_y_flag, 0)
@@ -765,7 +787,7 @@ def display():
     glMatrixMode(GL_MODELVIEW) 
 
     drawField()    
-        
+
     drawBall()
 
     glTranslate(0, 0, 1.4)
@@ -778,9 +800,8 @@ def display():
     
     drawBleachers()
 
-
     glutSwapBuffers()
-
+    
 
 def textura1(source):
     img = Image.open(source)
@@ -815,32 +836,69 @@ def textura2(source):
     glGenerateMipmap(GL_TEXTURE_2D)
     return textID
 
-def init():
-    global textID2, textID
 
-    glClearColor(0.0, 0.1, 0.0, 1.0) 
-    #glEnable(GL_DEPTH_TEST)
+def ilumination():   
+    global textID 
+    if day:
+        globalAmb = [1.0, 1.0, 1.0, 1.0]
+        light_color = [1.0, 1.0, 1.0, 1.0]
+        glClearColor(0.0, 0.5, 1.0, 1.0)    
+        textID = textura1("gramados/day_gramado.jpg")
+    else:
+        globalAmb = [0.2, 0.2, 0.2, 1.0]
+        light_color = [0.0, 0.0, 0.1, 1.0]
+        glClearColor(0.0, 0.0, 0.1, 1.0)    
+        textID = textura1("gramados/night_gramado.jpg")
+
+    
+    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, globalAmb)
+    
+    posVector = [0.0, 0.0, 20.0]
+    dirVector = [0.0, 0, -1.0]
+        
+    glLightfv (GL_LIGHT1, GL_POSITION, posVector)
+    glLightfv (GL_LIGHT1, GL_SPOT_DIRECTION, dirVector)
+    glLightf (GL_LIGHT1, GL_SPOT_CUTOFF, 30)
+    glLightfv (GL_LIGHT1, GL_DIFFUSE, light_color)
+    #glLightfv (GL_LIGHT1, GL_SPECULAR, light_color)
+    #glLightfv (GL_LIGHT1, GL_AMBIENT, color);
+ 
+    """especularidade = [1.0, 1.0, 1.0, 1.0]
+    glMaterialfv(GL_FRONT, GL_SPECULAR, especularidade)
+    glMaterialf(GL_FRONT, GL_SHININESS, 2.0) """    
+    
+    glEnable(GL_COLOR_MATERIAL)
+    glEnable(GL_LIGHTING)
+    glEnable(GL_LIGHT1)
+   # glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE)
+
+    #glShadeModel(GL_FLAT)
+    #glEnable(GL_CULL_FACE)
+
+def init():
+    global textID2, textID 
+    glClearColor(0.0, 0.5, 1.0, 1.0)    
+
+
     glMatrixMode(GL_MODELVIEW) 
     gluLookAt (camera_x, camera_y, camera_z,center_x, center_y, center_z,lookat_x, lookat_y, lookat_z)
     
-    # textura do gramado
-    textID = textura1("gramados/gramado2.jpg")
-    # textID2 = textura2("gramados/marca.jpg")
-
-    
+     
   
     glMatrixMode(GL_PROJECTION)
     #glFrustum(-3.0, 3.0, 3.0, -3.0, 5.0, 15.0)
     gluPerspective(45, 640/640, 0.1, 400.0)
     glMatrixMode(GL_MODELVIEW)     
+    glEnable(GL_DEPTH_TEST)
 
 
 glutInit()
-glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB)
+glutInitDisplayMode( GLUT_DOUBLE | GLUT_RGB)
 glutInitWindowPosition(400, 300)
 glutInitWindowSize(900, 600)  
 glutCreateWindow("Football Field Simulator")
 init() 
+#ilumination()
 glutDisplayFunc(display)
 glutKeyboardFunc(keyboard_handler)
 glutSpecialFunc(keyboard_handler)
