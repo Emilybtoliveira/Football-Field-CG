@@ -50,8 +50,6 @@ textID = 0
 textIDArq = 0
 ballTextID = 0
 
-#TODO fazer uma função para as texturas!
-
 #======================== MODELAGEM =====================================
 def drawField():
     global textID2, textID
@@ -73,7 +71,7 @@ def drawField():
     
     # parte externa ao campo
     glBindTexture(GL_TEXTURE_2D,textID2)
-    glEnable(GL_TEXTURE_2D)
+    glEnable(GL_TEXTURE_2D) 
     glBegin(GL_QUADS) 
     glColor3f(0.3,0.5,0)
     glVertex3fv(v9)
@@ -85,8 +83,8 @@ def drawField():
     glVertex3fv(v12)
     glTexCoord2f(1, 1)
     glEnd()
-
     glDisable(GL_TEXTURE_2D)
+    
 
     glBegin(GL_QUADS)  
     glColor3f(0.0, 0.75, 0.0)
@@ -752,21 +750,23 @@ def textura(source,resize,tipocor=GL_RGB,resizesize=0):
         img = Image.open(source)
         
     img_data = np.array(list(img.getdata()), np.int8)
+
     textID = glGenTextures(1)
     glBindTexture(GL_TEXTURE_2D,textID)
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
+
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP)
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP)
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT)
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT)
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+    # glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+    # glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL)
 
-    
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img.size[0], img.size[1], 0, tipocor, GL_UNSIGNED_BYTE, img_data)
-    
     glGenerateMipmap(GL_TEXTURE_2D)
+    
     return textID
 
 def init():
@@ -781,15 +781,15 @@ def init():
     textID = textura("gramados/gramado2.jpg",False)
 
     # textura da arquibancada
-    # textIDArq = textura("arq/acryc2.png",True,GL_RGBA,(125,125))
+    textIDArq = textura("acryc3.png",False,GL_RGBA)
 
     # textura da parte externa
-    # textID2 = textura("gramados/marca.jpg")
+    # textID2 = textura("gramadomudar2.png",False)
+    
     
     # textura da bola
-    ballTextID = textura("bola/bola3.png",True,GL_RGBA,(125,125))
+    ballTextID = textura("bola3.png",True,GL_RGBA,(125,125))
 
-    
   
     glMatrixMode(GL_PROJECTION)
     
