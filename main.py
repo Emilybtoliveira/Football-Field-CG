@@ -333,7 +333,7 @@ def drawABleachSideUp():
     glScalef(1.3, 1.0, 1.0)
     glutSolidCube(1.0)   
     glPopMatrix()
-
+    
 def drawABleachSideLeft():
     glTranslate(-40,0,45) # mudar isso aqui
     glRotate(90, 0, 1, 0)
