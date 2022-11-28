@@ -42,11 +42,11 @@ flagRotationBallZ = 0
 
 textID2 = 0
 textID = 0
+textIDArq = 0
+ballTextID = 0
 
 day = True
 reflector = True
-
-#TODO fazer uma função para as texturas!
 
 #======================== MODELAGEM =====================================
 def drawField():
@@ -181,7 +181,13 @@ def drawBall():
    
     glRotatef(angleRotation, flagRotationBallX, flagRotationBallY, flagRotationBallZ)
     # o 1 é em qual eixo tem que ser feita a rotacao
-    glutWireSphere (0.5, 20, 20)
+    glBindTexture(GL_TEXTURE_2D,ballTextID)
+    glEnable(GL_TEXTURE_2D)
+    bola = gluNewQuadric()
+    gluQuadricTexture(bola,GL_TRUE)
+    gluSphere(bola,0.5, 20, 20)
+    glTexCoord2f(1, 1)
+    glDisable(GL_TEXTURE_2D)
    
     glPopMatrix()
 
@@ -399,8 +405,8 @@ def drawBleachers():
     drawABleachSideLeft()
     glPopMatrix()
 
-    #TODO diminuir as arquibancadas e girar elas!
-    # TODO resolver o posicionamento!
+
+
 
 def drawAReflector(x, y, color):
     glPushMatrix()
@@ -571,12 +577,18 @@ def textScore(x, y, color, text):
     glutBitmapString(GLUT_BITMAP_TIMES_ROMAN_24, text.encode('ascii'))
 
 def displayScores():
-    #glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-    textScore(100, 100, (1, 0, 0), str(goalsCounter1))
-    textScore(150, 100, (1, 0, 0), "x")
-    textScore(200, 100, (1, 0, 0), str(goalsCounter2))
+    # glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+    
+    textScore(95, 125, (1, 1, 1), "__________")
+    textScore(92, 100, (1, 1, 1), "|")
+    textScore(100, 100, (1, 1, 1), str(goalsCounter1))
+    textScore(150, 100, (1, 1, 1), "X")
+    textScore(200, 100, (1, 1, 1), str(goalsCounter2))
+    textScore(220, 100, (1, 1, 1), "|")
+    textScore(95, 100, (1, 1, 1), "__________")
     #glutSwapBuffers()
     #glutPostRedisplay()
+
 
 def gol():
 
@@ -835,7 +847,7 @@ def display():
     glutSwapBuffers()
     
 
-def textura1(source):
+def textura(source):
     img = Image.open(source)
     img_data = np.array(list(img.getdata()), np.int8)
     textID = glGenTextures(1)
@@ -858,14 +870,14 @@ def ilumination():
         globalAmb = [1.0, 1.0, 1.0, 1.0]
         light_color = [1.0, 1.0, 1.0, 1.0]
         glClearColor(0.0, 0.8, 1.0, 1.0)    
-        textID = textura1("gramados/day_gramado.jpg")
+        textID = textura("gramados/day_gramado.jpg")
         glDisable(GL_FOG)
         glDisable(GL_LIGHT0)
     else:
         globalAmb = [0.2, 0.2, 0.2, 1.0]
         light_color = [0.0, 0.0, 0.1, 1.0]
         glClearColor(0.0, 0.0, 0.1, 1.0)    
-        textID = textura1("gramados/night_gramado.jpg")
+        textID = textura("gramados/night_gramado.jpg")
         glEnable (GL_FOG) 
               
         if reflector:
