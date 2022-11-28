@@ -184,13 +184,15 @@ def drawBall():
    
     glRotatef(angleRotation, flagRotationBallX, flagRotationBallY, flagRotationBallZ)
     # o 1 é em qual eixo tem que ser feita a rotacao
-    # glBindTexture(GL_TEXTURE_2D,ballTextID)
-    # glEnable(GL_TEXTURE_2D)
+    glBindTexture(GL_TEXTURE_2D,ballTextID)
+    glEnable(GL_TEXTURE_2D)
     bola = gluNewQuadric()
     gluQuadricTexture(bola,GL_TRUE)
     gluSphere(bola,0.5, 20, 20)
-    # glTexCoord2f(1, 1)
-    # glDisable(GL_TEXTURE_2D)
+    glTexCoord2f(1, 1)
+    glDisable(GL_TEXTURE_2D)
+
+    
    
     glPopMatrix()
 
@@ -871,7 +873,7 @@ def init():
 
     glMatrixMode(GL_MODELVIEW) 
     gluLookAt (camera_x, camera_y, camera_z,center_x, center_y, center_z,lookat_x, lookat_y, lookat_z)   
-    # ballTextID = textura("bola3.png")
+    ballTextID = textura("bola.jpg")
   
     glMatrixMode(GL_PROJECTION)
     #glFrustum(-3.0, 3.0, 3.0, -3.0, 5.0, 15.0)
